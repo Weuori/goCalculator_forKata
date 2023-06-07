@@ -17,7 +17,6 @@ type CalcError struct {
 func main() {
 
 	fmt.Println("Строковый калькулятор GoLang")
-	fmt.Println("----------------------------")
 	Calculator()
 }
 
@@ -35,12 +34,13 @@ func Calculator() (result string, err CalcError) {
 			fmt.Println(err.Err)
 		}
 	} else {
-		fmt.Println(result)
+		fmt.Printf("Ответ: %s \n", result)
 	}
 	return Calculator()
 }
 
 func InputString() (task string) {
+	fmt.Println("------------------------------")
 	fmt.Println("Введите математическую задачу:")
 	task, _ = bufio.NewReader(os.Stdin).ReadString('\n')
 	return strings.ReplaceAll(strings.TrimSpace(task), " ", "")
@@ -67,7 +67,7 @@ func ParseTask(task string) (rawX []string, rawY []string, operator string) {
 func ValidateOperand(rawOperand []string) (operand string, isCypher bool, isRoman bool) {
 	operand = strings.Join(rawOperand, "")
 	isCypher, _ = regexp.MatchString(`^([1-9]?[0-9]+)$`, operand)
-	isRoman, _ = regexp.MatchString(`^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$`, operand) // `^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$` `^(I{0,3}|I[VX]|V?I{0,3}|X)$`
+	isRoman, _ = regexp.MatchString(`^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$`, operand)
 
 	return operand, isCypher, isRoman
 }
@@ -197,7 +197,7 @@ func Compute(rawX []string, rawY []string, operator string) (result string, err 
 	y, isCypherY, isRomanY := ValidateOperand(rawY)
 
 	switch {
-	case (!isCypherX && !isRomanX) || (!isCypherY && !isRomanY) || (len(operator) != 1):
+	case (!isCypherX && !isRomanX) || (!isCypherY && !isRomanY) || (len(operator) != 1) || len(rawX) == 0 || len(rawY) == 0:
 		err = CalcError{
 			Err:    fmt.Errorf("ошибка ввода. Неправильный формат математической операции"),
 			IsExit: false,
